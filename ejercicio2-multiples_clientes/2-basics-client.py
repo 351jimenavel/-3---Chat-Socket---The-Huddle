@@ -3,20 +3,7 @@
 Igual que el anterior, pero soportando varios clientes usando threading.
 '''
 
-#### Aun no se realizaron cambios aca
-
-# Importar la libreria socket para poder utilizarlo
-
-## DESDE EL SERVIDOR
-# 1. El servidor crea su socket propio
-# 2. El servidor vincula su socket a la direccion IP y puerto que desea (localhost)
-# 3. El servidor escucha, osea espera por conexiones
-# 4. El servidor acepta conexiones
-# 8. El servidor recibe data (mensaje) por parte del cliente
-# 9. El servidor envia data al cliente
-# 12. El servidor recibe el mensaje de cierre del cliente
-# 13. El servidor cierra su conexion
-########################
+#### Luego de completar la parte del servidor, empiezan los cambios en ese archivo
 
 import socket
 ## DESDE EL CLIENTE
@@ -26,12 +13,15 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = '127.0.0.1'
 port = 8080
 client_socket.connect((host, port))
-# 7. El cliente envia data (mensaje)
-client_socket.send('Hola servidor'.encode('utf-8')) 
-# 10. El cliente recibe data del servidor
-response = client_socket.recv(2048).decode('utf-8')
-print('Eco del servidor: ', response)
-# 11. El cliente decide cerrar conexion
-client_socket.send('Cierro conexion'.encode('utf-8'))
-print('chau')
-client_socket.close()
+
+# El cliente tendra hilos para
+## 1) Enviar mensajes al servidor (lo que el usuario va a escribri)
+    ## Opcion para salir del chat con comando o escribiendo "salir"
+    ## Mientras no se haya escrito esto: pedir al usuario que escriba algo y enviar eso al servidor
+    ## Si el mensaje es salir
+        ## cerrar socket
+        ## terminar hilo
+
+## 2) Recibir mensajes desde el servidor
+    ## estar siempre escuchando
+    ## mostrar los mensajes recibidos del servidor
