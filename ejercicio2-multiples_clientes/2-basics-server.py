@@ -17,25 +17,16 @@ socket_server.bind((host, port))
 print('Servidor activo....')
 socket_server.listen()
 
-#
+# (*) Aca ya no solo tiene que ser aceptar una sola conexion sino infinitas
+## Mientras el servidor este corriendo:
+### Aceptar una nueva conexion (cliente y direccion)
 cliente, address = socket_server.accept()
+### Crear un hilo nuevo que se encargue de ese cliente
+### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
 
-mensaje = cliente.recv(2048).decode('utf-8')
-print('Mensaje recibido del cleinte:', mensaje)
+#### Funcion manejar cliente:
+# Mientras el cliente este conectado
+## Escuchar los mensajes que envia
+## Si el mensaje es 'salir', cortar conexion y salir del hilo
 
-cliente.send(mensaje.encode())
-
-mensaje_cierre = cliente.recv(2048).decode('utf-8')
-print('Ok, cerrando cliente...')
-cliente.close()
-
-print('Cerrando server...')
-socket_server.close()
-
-################################
-## DESDE EL CLIENTE
-# 5. El cliente crea su propio socket
-# 6. El cliente conecta su socket a la misma direccion IP y puerto colocado en el servidor (se establece conexion)
-# 7. El cliente envia data (mensaje) 
-# 10. El cliente recibe data del servidor
-# 11. El cliente decide cerrar conexion
+#### Llevar registro de todos los clientes conectados 
