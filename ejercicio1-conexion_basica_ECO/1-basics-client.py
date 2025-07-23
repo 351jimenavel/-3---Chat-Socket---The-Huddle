@@ -11,7 +11,7 @@
 # 9. El servidor envia data al cliente
 # 12. El servidor recibe el mensaje de cierre del cliente
 # 13. El servidor cierra su conexion
-
+########################
 import socket
 ## DESDE EL CLIENTE
 # 5. El cliente crea su propio socket

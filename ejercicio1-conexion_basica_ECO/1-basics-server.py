@@ -32,6 +32,7 @@ cliente.close()
 print('Cerrando server...')
 socket_server.close()
 
+################################
 ## DESDE EL CLIENTE
 # 5. El cliente crea su propio socket
 # 6. El cliente conecta su socket a la misma direccion IP y puerto colocado en el servidor (se establece conexion)
