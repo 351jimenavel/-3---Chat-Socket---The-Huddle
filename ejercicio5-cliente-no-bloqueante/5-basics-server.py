@@ -15,6 +15,8 @@ port = 23456
 server_socket.bind((host, port))
 # listen
 server_socket.listen()
+print("SERVIDOR ACTIVO")
+print("Esperando conexiones..")
 
 # 2. Crear una lista de sockets activos (socket del servidor incluido)
 lista_sockets_activos = [server_socket]
