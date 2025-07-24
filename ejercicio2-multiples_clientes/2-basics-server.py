@@ -46,4 +46,4 @@ while True:
     ### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
 
     #### Llevar registro de todos los clientes conectados 
-    lista_de_clientes.append((cliente,address))
+    lista_de_clientes.append(cliente)
