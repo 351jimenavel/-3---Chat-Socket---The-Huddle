@@ -54,7 +54,7 @@ def handle_clients(cliente_socket, addr):
             ## Si el mensaje es 'salir', cortar conexion y salir del hilo
             ### Seguimos practicando manejo de errores con respecto a remover un cliente si se cierra conexion
             if mensaje.lower() == 'salir':
-                print(f'Cerrando conexion de {cliente_socket}:{addr}')
+                print(f'Cerrando conexion de {addr}')
                 cliente_socket.close()
                 try:
                     lista_de_clientes.remove((cliente_socket, addr))
