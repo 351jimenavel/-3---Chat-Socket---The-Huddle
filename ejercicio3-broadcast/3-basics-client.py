@@ -19,19 +19,19 @@ def enviar_mensaje(cliente_socket):
         try:
             mensaje = input()
         except EOFError:
-            print("Se cerro la entrada.")
+            print("[ERROR] Se cerro la entrada.")
             break
     ## Mientras no se haya escrito esto: pedir al usuario que escriba algo y enviar eso al servidor
         if mensaje != '':
-            print('Mensaje enviado')
+            print(f'[<<] ME: {mensaje}')
             client_socket.send(mensaje.encode())
         else:
-            print('El mensaje enviado por el cliente esta vacio')
+            print('[i] El mensaje enviado por el cliente esta vacio')
     ## Si el mensaje es salir
         ## cerrar socket
         ## terminar hilo
         if mensaje == 'salir':
-            print('Cerrando conexion...')
+            print('[BYE] Cerrando conexion...')
             cliente_socket.close()
             break
 
@@ -43,13 +43,13 @@ def recibir_mensaje(cliente_socket):
             response = client_socket.recv(2048).decode('utf-8')
             if response:
                 ## mostrar los mensajes recibidos del servidor
-                print(f'Mensaje recibido: {response}')
+                print(f'[>>] Mensaje recibido de {response}')
             else:
-                print('Cerrando conexion...')
+                print('[BYE] Cerrando conexion...')
                 cliente_socket.close()
                 break
         except (ConnectionError, OSError):
-            print('Se perdio la conexion con el servidor')
+            print('[ERROR] Se perdio la conexion con el servidor')
             cliente_socket.close()
             break
 
