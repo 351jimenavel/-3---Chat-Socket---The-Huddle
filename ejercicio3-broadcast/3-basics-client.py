@@ -21,8 +21,8 @@ def enviar_mensaje(cliente_socket):
         mensaje = input()
     ## Mientras no se haya escrito esto: pedir al usuario que escriba algo y enviar eso al servidor
         if mensaje != '':
-            client_socket.send(mensaje.encode())
             print('Mensaje enviado')
+            client_socket.send(mensaje.encode())
         else:
             print('El mensaje enviado por el cliente esta vacio')
     ## Si el mensaje es salir
