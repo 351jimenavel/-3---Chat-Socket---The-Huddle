@@ -26,6 +26,8 @@ while True:
 ### (a) escuchar lo que escribe el usuario
 ### (b) escuchar lo que llega del servidor
 ####### al mismo tiempo!!!
+
+    ## select() en Windows solo acepta sockets, no acepta sys.stdin.
     lectura, _, _ = select.select([sys.stdin, client_socket], [], [])
     for fuente in lectura:
         ### 3.2 si hay datos en stdin
