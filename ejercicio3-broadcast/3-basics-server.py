@@ -12,8 +12,9 @@ host = '127.0.0.1'
 port = 8080
 socket_server.bind((host, port))
 
-print('Servidor activo....')
 socket_server.listen()
+print("---[SERVIDOR ACTIVO]---")
+print(" ¡Esperando conexiones! ")
 
 lista_de_clientes = []
 
@@ -34,7 +35,7 @@ def handle_clients(cliente_socket, addr):
             ## Escuchar los mensajes que envia
             mensaje = cliente_socket.recv(2048).decode('utf-8')
             if mensaje != '':
-                print(f'{addr} ha enviado el siguiente mensaje: {mensaje}')
+                print(f'[NEW MESSAGE] {addr} : {mensaje}')
                 # Difundir mensaje a todos los clientes (BROADCAST)
                 for cliente, _ in lista_de_clientes:
                     # DETALLE: que solo les aparezca a los demas clientes, no a uno mismo
@@ -43,38 +44,43 @@ def handle_clients(cliente_socket, addr):
                         try:
                             cliente.send(f'{addr}: {mensaje}'.encode())
                         except ConnectionResetError:
-                            print(f'Error al enviar mensaje a {cliente}, eliminando')
+                            print(f'[!] Error al enviar mensaje a {cliente}, eliminando')
                             # Practicar manejo de errores (EJ: eliminar al cliente de la lista si se cierra conexion, verificar que este en la lista, etc)
                             # antes de eliminar cliente, verificar si esta en la lista
                             try:
                                 lista_de_clientes.remove((cliente,addr))
                             except ValueError:  # error que se lanza cuando intentas usar un valor con el tipo correcto pero contenido incorrecto
                                 pass
+                            print(f'[i] Total de clientes conectados: {len(lista_de_clientes)}')
 
             ## Si el mensaje es 'salir', cortar conexion y salir del hilo
             ### Seguimos practicando manejo de errores con respecto a remover un cliente si se cierra conexion
             if mensaje.lower() == 'salir':
-                print(f'Cerrando conexion de {addr}')
+                print(f'[!] Cerrando conexion de {addr}')
                 cliente_socket.close()
                 try:
                     lista_de_clientes.remove((cliente_socket, addr))
                 except ValueError:
-                    print('Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
+                    print('[!] Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
                 connected = False       # para romper el loop
+                print(f'[i] Total de clientes conectados: {len(lista_de_clientes)}')
         
-        except ConnectionResetError:
-            print(f'{addr} se desconecto inesperadamente')
+        except (ConnectionResetError, KeyboardInterrupt, EOFError):
+            print(f'[!] {addr} se desconecto inesperadamente')
             try:
                 lista_de_clientes.remove((cliente_socket, addr))
             except ValueError:
                 pass
             cliente_socket.close()
+            print(f'[i] Total de clientes conectados: {len(lista_de_clientes)}')
             connected = False
 
 ## Mientras el servidor este corriendo:
 while True:
     ### Aceptar una nueva conexion (cliente y direccion)
     cliente, address = socket_server.accept()
+    print(f'[NEW CONNECTION ESTABLISHED] {address}')
+    print(f'[i] Total de clientes conectados: {len(lista_de_clientes)+1}')
     ### Crear un hilo nuevo que se encargue de ese cliente
     thread_clients = threading.Thread(target=handle_clients, args=(cliente, address))
     thread_clients.start()
