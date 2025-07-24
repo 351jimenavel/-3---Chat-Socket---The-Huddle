@@ -19,12 +19,7 @@ lista_de_clientes = []
 
 '''En la version anterior el servidor actuaba como un receptor nada mas haciendo:
             print(f'{cliente_socket}:{addr} ha enviado el siguiente mensaje: {mensaje}')'''
-            # Ahora tiene que:
-            # Difundir mensaje a todos los clientes (BROADCAST)
-                # DETALLE: que solo les aparezca a los demas clientes, no a uno mismo
-                # mostrar mensaje
-                # Practicar manejo de errores (EJ: eliminar al cliente de la lista si se cierra conexion, verificar que este en la lista, etc)
-
+            
 #### Funcion manejar cliente:
 def handle_clients(cliente_socket, addr):
     connected = True
@@ -33,7 +28,21 @@ def handle_clients(cliente_socket, addr):
         ## Escuchar los mensajes que envia
         mensaje = cliente_socket.recv(2048).decode('utf-8')
         if mensaje != '':
-            print(f'{cliente_socket}:{addr} ha enviado el siguiente mensaje: {mensaje}')
+            # Difundir mensaje a todos los clientes (BROADCAST)
+            for cliente in lista_de_clientes:
+                # DETALLE: que solo les aparezca a los demas clientes, no a uno mismo
+                if cliente != cliente_socket:
+                    # mostrar mensaje
+                    try:
+                        cliente.send(f'{addr}: {mensaje}'.encode())
+                    # Practicar manejo de errores (EJ: eliminar al cliente de la lista si se cierra conexion, verificar que este en la lista, etc)
+                    except:
+                        cliente.close()
+                        # antes de eliminar cliente, verificar si esta en la lista
+                        try:
+                            lista_de_clientes.remove(cliente)
+                        except ValueError:  # error que se lanza cuando intentas usar un valor con el tipo correcto pero contenido incorrecto
+                            pass
 
         ## Si el mensaje es 'salir', cortar conexion y salir del hilo
         if mensaje == 'salir':
