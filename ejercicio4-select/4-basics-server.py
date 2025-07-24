@@ -37,7 +37,7 @@ while True:
         # aceptar nueva conexion (si el socket es el del servidor)
         if socket_actual == server_socket:
             nuevo_cliente, addr = server_socket.accept()
-            print("Nueva conexion establecida")
+            print(f"Nueva conexion establecida. Total de clientes conectados: {len(lista_sockets_activos)} ")
             # agregar la conexion a la lista de sockets activos
             lista_sockets_activos.append(nuevo_cliente)
         # si el socket es del cliente
@@ -75,7 +75,7 @@ while True:
 
 # 5. Si un cliente se va, eliminar su socket de la lista y cerrar conexion
             except:
-                print('Error con cliente')
+                print(f'Cliente desconectado. Total de clientes conectados: {len(lista_sockets_activos)-2}')
                 socket_actual.close()
                 try:
                     lista_sockets_activos.remove(socket_actual)
