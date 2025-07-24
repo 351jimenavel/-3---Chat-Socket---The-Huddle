@@ -34,7 +34,7 @@ def enviar_mensaje(cliente_socket):
     ## Si el mensaje es salir
         ## cerrar socket
         ## terminar hilo
-        if mensaje == 'salir':
+        if mensaje.lower() == 'salir':
             print('Cerrando conexion...')
             cliente_socket.close()
             break
