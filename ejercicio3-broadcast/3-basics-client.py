@@ -1,8 +1,6 @@
 '''3. Broadcast manual
 Al recibir un mensaje de un cliente, el server lo reenvía a todos los demás.'''
 
-#### Continua la version del ejercicio 2. 
-
 import socket
 import threading
 ## DESDE EL CLIENTE
