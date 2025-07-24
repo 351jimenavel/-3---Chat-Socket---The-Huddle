@@ -16,7 +16,11 @@ print('CONECTADO AL SERVIDOR')
 def enviar_mensaje(cliente_socket):
     ## Opcion para salir del chat con comando o escribiendo "salir"
     while True:
-        mensaje = input()
+        try:
+            mensaje = input()
+        except EOFError:
+            print("Se cerro la entrada.")
+            break
     ## Mientras no se haya escrito esto: pedir al usuario que escriba algo y enviar eso al servidor
         if mensaje != '':
             print('Mensaje enviado')
