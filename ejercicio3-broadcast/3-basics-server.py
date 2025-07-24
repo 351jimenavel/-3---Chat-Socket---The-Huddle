@@ -25,35 +25,49 @@ def handle_clients(cliente_socket, addr):
     connected = True
 # Mientras el cliente este conectado
     while connected:
-        ## Escuchar los mensajes que envia
-        mensaje = cliente_socket.recv(2048).decode('utf-8')
-        if mensaje != '':
-            # Difundir mensaje a todos los clientes (BROADCAST)
-            for cliente in lista_de_clientes:
-                # DETALLE: que solo les aparezca a los demas clientes, no a uno mismo
-                if cliente != cliente_socket:
-                    # mostrar mensaje
-                    try:
-                        cliente.send(f'{addr}: {mensaje}'.encode())
-                    # Practicar manejo de errores (EJ: eliminar al cliente de la lista si se cierra conexion, verificar que este en la lista, etc)
-                    except:
-                        cliente.close()
-                        # antes de eliminar cliente, verificar si esta en la lista
+        ### OBS: En el testeo de este codigo pude notar que si el cliente ingresa el mensaje 'salir', se rompe la conexion en el servidor
+        ##### para el manejo de ese error voy a probar 'ConnectionResetError'
+        ##### ConnectionResetError indica que un cliente cerro su conexion abruptamente (Ej: cerrando terminal, Ctrl+C, enviando mensaje 'salir')
+        try:
+            ## Escuchar los mensajes que envia
+            mensaje = cliente_socket.recv(2048).decode('utf-8')
+            if mensaje != '':
+                print(f'{cliente_socket}:{addr} ha enviado el siguiente mensaje: {mensaje}')
+                # Difundir mensaje a todos los clientes (BROADCAST)
+                for cliente, _ in lista_de_clientes:
+                    # DETALLE: que solo les aparezca a los demas clientes, no a uno mismo
+                    if cliente != cliente_socket:
+                        # mostrar mensaje
                         try:
-                            lista_de_clientes.remove(cliente)
-                        except ValueError:  # error que se lanza cuando intentas usar un valor con el tipo correcto pero contenido incorrecto
-                            pass
+                            cliente.send(f'{addr}: {mensaje}'.encode())
+                        except ConnectionResetError:
+                            print(f'Error al enviar mensaje a {cliente}, eliminando')
+                            # Practicar manejo de errores (EJ: eliminar al cliente de la lista si se cierra conexion, verificar que este en la lista, etc)
+                            # antes de eliminar cliente, verificar si esta en la lista
+                            try:
+                                lista_de_clientes.remove((cliente,addr))
+                            except ValueError:  # error que se lanza cuando intentas usar un valor con el tipo correcto pero contenido incorrecto
+                                pass
 
-        ## Si el mensaje es 'salir', cortar conexion y salir del hilo
-        ### Seguimos practicando manejo de errores con respecto a remover un cliente si se cierra conexion
-        if mensaje == 'salir':
-            print(f'Cerrando conexion de {cliente_socket}:{addr}')
-            cliente_socket.close()
+            ## Si el mensaje es 'salir', cortar conexion y salir del hilo
+            ### Seguimos practicando manejo de errores con respecto a remover un cliente si se cierra conexion
+            if mensaje.lower() == 'salir':
+                print(f'Cerrando conexion de {cliente_socket}:{addr}')
+                cliente_socket.close()
+                try:
+                    lista_de_clientes.remove((cliente_socket, addr))
+                except ValueError:
+                    print('Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
+                connected = False       # para romper el loop
+        
+        except ConnectionResetError:
+            print(f'{addr} se desconecto inesperadamente')
             try:
-                lista_de_clientes.remove(cliente_socket)
+                lista_de_clientes.remove((cliente_socket, addr))
             except ValueError:
                 pass
-            connected = False       # para romper el loop
+            cliente_socket.close()
+            connected = False
 
 ## Mientras el servidor este corriendo:
 while True:
@@ -65,4 +79,4 @@ while True:
     ### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
 
     #### Llevar registro de todos los clientes conectados 
-    lista_de_clientes.append(cliente)
+    lista_de_clientes.append((cliente, address))
