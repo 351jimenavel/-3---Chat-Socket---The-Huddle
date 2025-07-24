@@ -45,33 +45,37 @@ while True:
                 # si se reciben datos
                 if mensaje:
                     # procesarlos o hacer broadcast
-                    print(f'{addr} ha enviado: {mensaje}')
+                    print(f'Cliente ha enviado: {mensaje}')
                     for cliente in lista_sockets_activos:
                         if cliente != socket_actual and cliente != server_socket:
                             try:
-                                cliente.send(f'{addr}:{mensaje}'.encode())
-                            except ConnectionResetError:
-                                print(f'Error al enviar mensaje a {cliente}, eliminando')
+                                cliente.send(mensaje.encode())
+                            except:
+                                print(f'Error al enviar mensaje')
+                                cliente.close()
                                 try:
-                                    lista_sockets_activos.remove((cliente,addr))
+                                    lista_sockets_activos.remove(cliente)
                                 except ValueError:
+                                    print('Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
                                     pass
                 # si no, mostrar cliente desconectado
                 else:
-                    print(f'Error en {addr}, desconectando cliente...')
+                    print(f'Cliente desconectado')
                     # cerrar
+                    socket_actual.close()
                     # quitarlo de la lista
                     try:
-                        lista_sockets_activos.remove((nuevo_cliente, addr))
+                        lista_sockets_activos.remove(socket_actual)
                     except ValueError:
+                        print('Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
                         pass
-                    socket_actual.close()
 
 # 5. Si un cliente se va, eliminar su socket de la lista y cerrar conexion
-            except ConnectionResetError:
-                print(f'{addr} se desconecto inesperadamente')
-                try:
-                    lista_sockets_activos.remove((nuevo_cliente, addr))
-                except ValueError:
-                    pass
+            except:
+                print('Error con cliente')
                 socket_actual.close()
+                try:
+                    lista_sockets_activos.remove(socket_actual)
+                except ValueError:
+                    print('Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
+                    pass
