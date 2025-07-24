@@ -29,12 +29,12 @@ def handle_clients(cliente_socket, addr):
         ### OBS: En el testeo de este codigo pude notar que si el cliente ingresa el mensaje 'salir', se rompe la conexion en el servidor
         ##### para el manejo de ese error voy a probar 'ConnectionResetError'
         ##### ConnectionResetError indica que un cliente cerro su conexion abruptamente (Ej: cerrando terminal, Ctrl+C, enviando mensaje 'salir')
-        
+
         try:
             ## Escuchar los mensajes que envia
             mensaje = cliente_socket.recv(2048).decode('utf-8')
             if mensaje != '':
-                print(f'{cliente_socket}:{addr} ha enviado el siguiente mensaje: {mensaje}')
+                print(f'{addr} ha enviado el siguiente mensaje: {mensaje}')
                 # Difundir mensaje a todos los clientes (BROADCAST)
                 for cliente, _ in lista_de_clientes:
                     # DETALLE: que solo les aparezca a los demas clientes, no a uno mismo
