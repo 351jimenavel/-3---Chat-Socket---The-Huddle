@@ -48,8 +48,8 @@ def recibir_mensaje(cliente_socket):
                 print('Cerrando conexion...')
                 cliente_socket.close()
                 break
-        except ConnectionError:
-            print('Error de conexion')
+        except (ConnectionError, OSError):
+            print('Se perdio la conexion con el servidor')
             cliente_socket.close()
             break
 
