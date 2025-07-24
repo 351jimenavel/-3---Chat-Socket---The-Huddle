@@ -18,6 +18,8 @@ port = 5555
 server_socket.bind((host, port))
 # listen
 server_socket.listen()
+print("SERVIDOR ACTIVO")
+print("Esperando conexiones..")
 
 # 2. Crear una lista de sockets activos (socket del servidor incluido)
 lista_sockets_activos = [server_socket]
@@ -35,6 +37,7 @@ while True:
         # aceptar nueva conexion (si el socket es el del servidor)
         if socket_actual == server_socket:
             nuevo_cliente, addr = server_socket.accept()
+            print("Nueva conexion establecida")
             # agregar la conexion a la lista de sockets activos
             lista_sockets_activos.append(nuevo_cliente)
         # si el socket es del cliente
