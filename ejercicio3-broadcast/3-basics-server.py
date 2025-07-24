@@ -25,9 +25,11 @@ def handle_clients(cliente_socket, addr):
     connected = True
 # Mientras el cliente este conectado
     while connected:
+
         ### OBS: En el testeo de este codigo pude notar que si el cliente ingresa el mensaje 'salir', se rompe la conexion en el servidor
         ##### para el manejo de ese error voy a probar 'ConnectionResetError'
         ##### ConnectionResetError indica que un cliente cerro su conexion abruptamente (Ej: cerrando terminal, Ctrl+C, enviando mensaje 'salir')
+        
         try:
             ## Escuchar los mensajes que envia
             mensaje = cliente_socket.recv(2048).decode('utf-8')
