@@ -30,3 +30,32 @@ Permanezca activo sin trabarse mientras espera mensajes.'''
 #         más limpio, escalable y fácil de mantener.                                                        #
 #                                                                                                           #
 #############################################################################################################
+
+## ESTRUCTURA DEL SERVER
+
+# Crear un socket del servidor
+
+# Configurar el socket
+### bind
+### setear como no bloqueante
+
+# Crear un selector
+
+# Registrar el socket del servidor en el selector
+### evento: event_read para saber cuando llega una nueva conexion
+
+# Loop principal
+### llamar a selector.select() para ver que socket esta listo
+### Por cada socket listo:
+    # (a) Si el socket es del servidor (llega nueva conexion):
+        # aceptar la conexion
+        # hacerla no bloqueante
+        # registrar ese nuevo socket en el selector
+            # evento: event_read (esperar datos del cliente)
+    # (b) Si es un socket de cliente (mandó datos):
+        # leer los datos
+        # si mandó algo:
+            # procesar e imprimir
+            # enviar de nuevo (ECO)
+        # si no (desconexión):
+            # cerrar el socket y removerlo del select
