@@ -33,29 +33,68 @@ Permanezca activo sin trabarse mientras espera mensajes.'''
 
 ## ESTRUCTURA DEL SERVER
 
-# Crear un socket del servidor
+import socket
+import selectors
 
+# Crear un socket del servidor
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Configurar el socket
 ### bind
+host = '127.0.0.1'
+port = 34567
+server_socket.bind((host,port))
+server_socket.listen()
+print(f'Server en modo escucha desde {(host, port)}')
 ### setear como no bloqueante
-
+server_socket.setblocking(False)
 # Crear un selector
+sel = selectors.DefaultSelector()
 
 # Registrar el socket del servidor en el selector
+sel.register(server_socket, selectors.EVENT_READ, data=None)
 ### evento: event_read para saber cuando llega una nueva conexion
 
 # Loop principal
-### llamar a selector.select() para ver que socket esta listo
-### Por cada socket listo:
-    # (a) Si el socket es del servidor (llega nueva conexion):
-        # aceptar la conexion
-        # hacerla no bloqueante
-        # registrar ese nuevo socket en el selector
-            # evento: event_read (esperar datos del cliente)
-    # (b) Si es un socket de cliente (mandó datos):
-        # leer los datos
-        # si mandó algo:
-            # procesar e imprimir
-            # enviar de nuevo (ECO)
-        # si no (desconexión):
-            # cerrar el socket y removerlo del select
+try:
+    while True:
+        ### llamar a selector.select() para ver que socket esta listo
+        eventos = sel.select(timeout=None)
+        ### Por cada socket listo:
+        for event in eventos:
+            # (a) Si el socket es del servidor (llega nueva conexion):
+            if event.fileobj is server_socket:
+                # aceptar la conexion
+                nueva_conn, addr = server_socket.accept()
+                # hacerla no bloqueante
+                nueva_conn.setblocking(False)
+                # registrar ese nuevo socket en el selector
+                sel.register(nueva_conn, selectors.EVENT_READ, data=None)
+                    # evento: event_read (esperar datos del cliente)
+                    
+            # (b) Si es un socket de cliente (mandó datos):
+            else:
+                sock = event.fileobj    # socket del cliente que esta listo
+                try:
+                # leer los datos
+                    mensaje = sock.recv(2048).decode('utf-8')
+                    # si mandó algo:
+                    if mensaje:
+                        # procesar e imprimir
+                        print(f'Mensaje recibido: {mensaje}')
+                        # enviar de nuevo (ECO)
+                        sock.send(mensaje.encode())
+                    else:
+                    # si no (desconexión):
+                        print("Cliente desconectado")
+                        # cerrar el socket y removerlo del select
+                        sel.unregister(sock)
+                        sock.close()
+                except ConnectionError:
+                    print("Error de conexion con cliente")
+                    sel.unregister(sock)
+                    sock.close()
+                    
+except KeyboardInterrupt:
+    print('Interrupcion manual, cerrando servidor...')
+finally:
+    sel.close()
