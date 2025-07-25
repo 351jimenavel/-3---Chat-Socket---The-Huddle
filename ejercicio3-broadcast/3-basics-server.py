@@ -33,7 +33,7 @@ def handle_clients(cliente_socket, addr):
 
         try:
             ## Escuchar los mensajes que envia
-            mensaje = cliente_socket.recv(2048).decode('utf-8')
+            mensaje = cliente_socket.recv(2048).decode('utf-8')     # formato de transformacion unicode de 8 bits
             if mensaje != '':
                 print(f'[NEW MESSAGE] {addr} : {mensaje}')
                 # Difundir mensaje a todos los clientes (BROADCAST)

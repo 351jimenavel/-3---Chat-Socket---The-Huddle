@@ -24,7 +24,7 @@ def enviar_mensaje(cliente_socket):
     ## Mientras no se haya escrito esto: pedir al usuario que escriba algo y enviar eso al servidor
         if mensaje != '':
             print(f'[<<] ME: {mensaje}')
-            client_socket.send(mensaje.encode())
+            client_socket.send(mensaje.encode('utf-8'))     # formato de transformacion unicode de 8 bits
         else:
             print('[i] El mensaje enviado por el cliente esta vacio')
     ## Si el mensaje es salir
@@ -45,7 +45,7 @@ def recibir_mensaje(cliente_socket):
                 ## mostrar los mensajes recibidos del servidor
                 print(f'[>>] Mensaje recibido de {response}')
             else:
-                print('[BYE] Cerrando conexion...')
+                print('[BYE] Cerrando conexion')
                 cliente_socket.close()
                 break
         except (ConnectionError, OSError):
