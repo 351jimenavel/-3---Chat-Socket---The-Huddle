@@ -1,5 +1,6 @@
 # 🛰️ Challenge 4 – Chat en tiempo real con Sockets  
 **The Huddle – Penguin Academy**
+
 Autora: Jimena Velázquez
 
 ---
@@ -99,6 +100,7 @@ salir
 
 ## 🇬🇧 English  
 **The Huddle – Penguin Academy**
+
 Author: Jimena Velázquez
 
 ### 📖 Description
