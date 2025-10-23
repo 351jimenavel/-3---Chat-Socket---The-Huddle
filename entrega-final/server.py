@@ -57,11 +57,11 @@ def handle_clients(cliente_socket, addr):
         
         except (ConnectionResetError, KeyboardInterrupt, EOFError):
             print(f'[!] {addr} se desconecto inesperadamente')
+            cliente_socket.close()
             try:
                 lista_de_clientes.remove((cliente_socket, addr))
             except ValueError:
-                pass
-            cliente_socket.close()
+                print('[!] Ese cliente ya no estaba en la lista (probablemente se ha desconectado)')
             print(f'[i] Total de clientes conectados: {len(lista_de_clientes)}')
             connected = False
 
