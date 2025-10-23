@@ -10,6 +10,7 @@ port = 8080
 socket_server.bind((host, port))
 
 socket_server.listen()
+socket_server.settimeout(1.0)
 print("---[SERVIDOR ACTIVO]---")
 print(" ¡Esperando conexiones! ")
 
@@ -66,16 +67,37 @@ def handle_clients(cliente_socket, addr):
             connected = False
 
 ## Mientras el servidor este corriendo:
-while True:
-    ### Aceptar una nueva conexion (cliente y direccion)
-    cliente, address = socket_server.accept()
-    print(f'[NEW CONNECTION ESTABLISHED] {address}')
-    print(f'[i] Total de clientes conectados: {len(lista_de_clientes)+1}')
-    
-    ### Crear un hilo nuevo que se encargue de ese cliente
-    thread_clients = threading.Thread(target=handle_clients, args=(cliente, address))
-    thread_clients.start()
-    ### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
+try: 
+    while True:
+        ### Aceptar una nueva conexion (cliente y direccion)
+        try:
+            cliente, address = socket_server.accept()
+        except socket.timeout:
+            continue # vuelve al inicio del loop
 
-    #### Llevar registro de todos los clientes conectados 
-    lista_de_clientes.append((cliente, address))
+        print(f'[NEW CONNECTION ESTABLISHED] {address}')
+        print(f'[i] Total de clientes conectados: {len(lista_de_clientes)+1}')
+        
+        ### Crear un hilo nuevo que se encargue de ese cliente
+        thread_clients = threading.Thread(target=handle_clients, args=(cliente, address))
+        thread_clients.start()
+        ### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
+
+        #### Llevar registro de todos los clientes conectados 
+        lista_de_clientes.append((cliente, address))
+
+except KeyboardInterrupt:
+    print('\n[SHUTDOWN] Cerrando clientes...')
+    for client, _ in lista_de_clientes:
+        try:
+            client.shutdown(socket.SHUT_RDWR)  # intenta cortar ambos sentidos
+        except OSError:
+            pass
+        finally:
+                client.close()
+    lista_de_clientes.clear()
+
+    socket_server.close()
+
+    print('[SHUTDOWN] Servidor apagado.')
+            
