@@ -18,13 +18,12 @@ def enviar_mensaje(cliente_socket):
     ## Opcion para salir del chat con comando o escribiendo "salir"
     while True:
         try:
-            mensaje = input()
+            mensaje = input(">> ")
         except EOFError:
-            print("[ERROR] Se cerro la entrada.")
+            print("\n[ERROR] Se cerro la entrada.")
             break
         ## Mientras no se haya escrito esto: pedir al usuario que escriba algo y enviar eso al servidor
-        if mensaje != '':
-            print(f'[<<] ME: {mensaje}')
+        if mensaje:
             client_socket.send(mensaje.encode('utf-8'))     # formato de transformacion unicode de 8 bits
         else:
             print('[i] El mensaje enviado por el cliente esta vacio')
@@ -45,13 +44,13 @@ def recibir_mensaje(cliente_socket):
             response = client_socket.recv(2048).decode('utf-8')
             if response:
                 ## mostrar los mensajes recibidos del servidor
-                print(f'[>>] Mensaje recibido de {response}')
+                print(f"\r[>>] {response}\n>>", end="", flush=True) # Mover al inicio de linea, mostrar mensaje recibido, y reponer el prompt
             else:
-                print('[BYE] Cerrando conexion')
+                print("\n[BYE] Cerrando conexion")
                 cliente_socket.close()
                 break
         except (ConnectionError, OSError):
-            print('[ERROR] Se perdio la conexion con el servidor')
+            print("\n[ERROR] Se perdio la conexion con el servidor")
             cliente_socket.close()
             break
 
