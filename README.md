@@ -145,12 +145,19 @@ Encoding: **UTF-8**
 
 ### 🧱 Features
 ✅ Real-time communication
+
 ✅ Multiple clients connected simultaneously
+
 ✅ Multithreaded send/receive system
+
 ✅ Broadcast message distribution
+
 ✅ Error and disconnection handling
+
 ✅ Command-line I/O (stdin/stdout)
+
 ✅ UTF-8 encoding
+
 ✅ Usernames for client identification
 
 ---
