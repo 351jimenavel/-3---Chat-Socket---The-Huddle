@@ -72,19 +72,20 @@ try:
         ### Aceptar una nueva conexion (cliente y direccion)
         try:
             cliente, address = socket_server.accept()
+            print(f'[NEW CONNECTION ESTABLISHED] {address}')
+            print(f'[i] Total de clientes conectados: {len(lista_de_clientes)+1}')
+            
+            ### Crear un hilo nuevo que se encargue de ese cliente
+            thread_clients = threading.Thread(target=handle_clients, args=(cliente, address), daemon=True)
+            thread_clients.start()
+            ### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
+
+            #### Llevar registro de todos los clientes conectados 
+            lista_de_clientes.append((cliente, address))
         except socket.timeout:
-            continue # vuelve al inicio del loop
+            # No hay nuevas conexiones, simplemente sigue el loop
+            continue
 
-        print(f'[NEW CONNECTION ESTABLISHED] {address}')
-        print(f'[i] Total de clientes conectados: {len(lista_de_clientes)+1}')
-        
-        ### Crear un hilo nuevo que se encargue de ese cliente
-        thread_clients = threading.Thread(target=handle_clients, args=(cliente, address))
-        thread_clients.start()
-        ### El hilo tendra la tarea de ejercutar una funcion que maneje solo a ese cliente.
-
-        #### Llevar registro de todos los clientes conectados 
-        lista_de_clientes.append((cliente, address))
 
 except KeyboardInterrupt:
     print('\n[SHUTDOWN] Cerrando clientes...')
@@ -94,9 +95,13 @@ except KeyboardInterrupt:
         except OSError:
             pass
         finally:
+            try:
                 client.close()
-    lista_de_clientes.clear()
+            except OSError:
+                pass
 
+    lista_de_clientes.clear()
+    print('[SHUTDOWN] Cerrando socket del servidor...')
     socket_server.close()
 
     print('[SHUTDOWN] Servidor apagado.')
